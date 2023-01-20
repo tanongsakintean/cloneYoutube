@@ -32,13 +32,13 @@ export default function Home() {
         <Sidebar />
         {videos.length ? (
           <InfiniteScroll
+            height={890}
             dataLength={videos.length}
             next={() => dispatch(getHomePageVideos(true))}
             hasMore={videos.length < 500}
             loader={<Spinner />}
-            height={650}
           >
-            <div className="grid gap-y-14 gap-x-8 grid-cols-4 p-8">
+            <div className="grid gap-y-14 gap-x-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 p-8">
               {videos.map((item: HomePageVideos) => {
                 return <Card data={item} key={item.videoId} />;
               })}
