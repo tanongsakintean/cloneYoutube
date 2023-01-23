@@ -6,28 +6,37 @@ import {
 } from "./index";
 import { YOUTUBE_API_URL } from "./constants";
 import { HomePageVideos } from "../Types";
+import { SourceMap } from "module";
 const API_KEY = import.meta.env.VITE_YOUTUBE_DATA_API_KEY;
 
 export const parseData = async (items: any[]) => {
   try {
     const videoIds: string[] = [];
     const channelIds: string[] = [];
+
+  ////n  parameter ไป forEach เพื่อเก็บค่าใส่ใน videoIds และ channelIds
     items.forEach(
+      ///n เลือก เข้าถึง snippet -> cheannelId และ id->videoId  
+      ///n มาใส่ ใน channelIds และ vidoeIds []
       (item: { snippet: { channelId: string }; id: { videoId: string } }) => {
         channelIds.push(item.snippet.channelId);
         videoIds.push(item.id.videoId);
       }
     );
 
+
+    //N รับข้อมูล จาก api มาใส่ ใน channelsData 
+    /// เข้าถึง data -> items = channelsData
     const {
-      data: { items: channelsData },
+      data: {  items:channelsData },
     } = await axios.get(
-      `${YOUTUBE_API_URL}/channels?part=snippet,contentDetails&id=${channelIds.join(
-        ","
-      )}&key=${API_KEY}`
+      `${YOUTUBE_API_URL}/channels?part=snippet,contentDetails&id=${channelIds.join(",")}&key=${API_KEY}`
     );
 
+
     const parsedChannelsData: { id: string; image: string }[] = [];
+    //n เอาค่า ChannelsData มาใส่ใน parsedChannelsData  เข้าถึง id type string และ 
+    //N snippet -> thumbnails -> default -> url 
     channelsData.forEach(
       (channel: {
         id: string;
@@ -39,6 +48,8 @@ export const parseData = async (items: any[]) => {
         })
     );
 
+
+    ///N รับค่า จาก api เข้าถึง data -> items = videosData
     const {
       data: { items: videosData },
     } = await axios.get(
@@ -46,7 +57,14 @@ export const parseData = async (items: any[]) => {
         ","
       )}&key=${API_KEY}`
     );
+
+
+    ///N สร้างตัวแปร array 
     const parsedData: HomePageVideos[] = [];
+
+    ///N เอาค่า items มาวนลูปใส่ค่า item เข้าถึง snippet -> ค่าๆ และ item เข้าถึง id -> videosId
+    ///N และ item เข้าถึง index 
+
     items.forEach(
       (
         item: {
@@ -62,10 +80,15 @@ export const parseData = async (items: any[]) => {
         },
         index: number
       ) => {
+        /// เข้าถึง image จาก  parsedChannelsData = channelImage
         const { image: channelImage } = parsedChannelsData.find(
-          (data) => data.id === item.snippet.channelId
+          /// check ค่าว่า ค่าไอดีตรงกันไหม
+          (data) =>  data.id === item.snippet.channelId
         )!;
+
+        ///N เช็คม่ี่ข้อมูลไหม
         if (channelImage)
+        ///N เอาค่าใส่ ใน paresed ตามลำดับ
           parsedData.push({
             videoId: item.id.videoId,
             videoTitle: item.snippet.title,
@@ -88,6 +111,7 @@ export const parseData = async (items: any[]) => {
       }
     );
 
+      //N ส่งค่ากลับ
     return parsedData;
   } catch (err) {
     console.log(err);

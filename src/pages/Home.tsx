@@ -10,7 +10,9 @@ import { getHomePageVideos } from "../store/reducers/getHomePageVideos";
 import { HomePageVideos } from "../Types";
 
 export default function Home() {
+  //N เอาไว้เรียกใช้งาน ฟังชั่น ใน reducer
   const dispatch = useAppDispatch();
+    //N เอาไว้เลือกข้อมูลที่ต้องการ ใน reducer
   const videos = useAppSelector((state) => state.youtubeApp.videos);
 
   useEffect(() => {
