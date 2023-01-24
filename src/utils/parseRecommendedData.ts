@@ -14,14 +14,21 @@ export const parseRecommendedData = async (items: Item[], videoId: string) => {
     const videoIds: string[] = [];
     const channelIds: string[] = [];
     const newItems: Item[] = [];
+
+    ///N วนลูป set ค่า ของ channelIds.push()
     items.forEach((item: Item) => {
       channelIds.push(item.snippet.channelId);
+
+      ///N เช็คว่าค่าว่างไหม 
       if (item.contentDetails?.upload?.videoId) {
+        ///N set ค่า เข้าอาเรย์ videoIds[]
         videoIds.push(item.contentDetails.upload.videoId);
+        ///N set ค่า เข้าอาเรย์ newItems[]
         newItems.push(item);
       }
     });
 
+    ////N รับค่า จาก api เข้าถึง data -> items = videosData
     const {
       data: { items: videosData },
     } = await axios.get(
@@ -30,10 +37,18 @@ export const parseRecommendedData = async (items: Item[], videoId: string) => {
       )}&key=${API_KEY}`
     );
 
+    //n สร้าง array  object 
     const parsedData: RecommendedVideos[] = [];
+
+    /// วนลูป ค่า newItems  มาใส่ ค่า array 
     newItems.forEach((item, index) => {
+      /// ถ้าเป็น video เดียวกัน return เลย
       if (index >= videosData.length) return;
+
+      /// ถ้าเป็น video เดียวกัน return เลย
       if (videoId === item?.contentDetails?.upload?.videoId) return;
+
+      ///n set ค่า array parsedData เข้า อาเรย์
       parsedData.push({
         videoId: item.contentDetails.upload.videoId,
         videoTitle: item.snippet.title,
@@ -52,6 +67,7 @@ export const parseRecommendedData = async (items: Item[], videoId: string) => {
       });
     });
 
+    ///N สงค่ากลับ array object 
     return parsedData;
   } catch (err) {
     console.log(err);

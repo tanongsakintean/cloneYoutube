@@ -15,6 +15,7 @@ type Props = {};
 
 function Watch({}: Props) {
   const [showMoreStatus, setShowMoreStatus] = useState<boolean>(false);
+
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -26,7 +27,9 @@ function Watch({}: Props) {
   );
   useEffect(() => {
     if (id) {
+      //N ค่า state global currentPlaying  ตามไอดีที่รับมา
       dispatch(getVideoDetails(id));
+      ///N set เพื่อ ซ้อน description
       setShowMoreStatus(false);
     } else {
       navigate("/");
@@ -34,7 +37,9 @@ function Watch({}: Props) {
   }, [id, navigate, dispatch]);
 
   useEffect(() => {
+    ///N ถ้า currentPlaying มีัข้อมูล และ id มีข้อมูล
     if (currentPlaying && id) {
+      //N set video ตาม ไอดี
       dispatch(getRecommendedVideos(id));
     }
   }, [currentPlaying, dispatch, id]);

@@ -17,7 +17,9 @@ export default function Navbar() {
   const handleSearch = () => {
     if (location.pathname !== "/search") navigate("/search");
     else {
+      ///N set ค่าให้ว่าง 
       dispatch(clearVideos());
+      /// set Video ที่เกิดจากการ ค้นหา  
       dispatch(getSearchPageVideos(false));
     }
   };
@@ -51,6 +53,7 @@ export default function Navbar() {
                 type="text"
                 className="w-96 bg-zinc-900 focus:outline-none border-none"
                 value={searchTerm}
+                /// set ค่า state global 
                 onChange={(e) => dispatch(changeSearchTerm(e.target.value))}
               />
 
